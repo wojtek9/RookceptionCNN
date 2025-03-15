@@ -87,7 +87,3 @@ if __name__ == "__main__":
 
     recognizer = BoardRecognizer(model_path, class_labels)
     board = recognizer.predict_board(test_img_path)
-
-    print("Recognized Chessboard:")
-    for row in board:
-        print(row)
