@@ -6,6 +6,9 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 
+from misc import utils
+
+
 class BoardRecognizer:
     def __init__(self, model_path, img_size=(64, 64)):
         self.model = load_model(model_path)
@@ -71,28 +74,26 @@ class BoardRecognizer:
             # Store mapping of image file -> prediction
             prediction_mapping.append((filename, board_state[row, col]))
 
-        print("\nRecognized Chessboard with accuracy:")
-        for row in board_with_accuracy:
-            print("  ".join(row))
-
-        print("\nRecognized Chessboard:")
-        for row in board_state:
-            print(row)
-
         # Print image-to-prediction mapping
         if save_squares:
             print("\nImage to Prediction Mapping:")
             for img_file, predicted_piece in prediction_mapping:
                 print(f"{img_file} -> {predicted_piece}")
 
+        utils.print_board(board=board_with_accuracy, title="Predicted board with accuracy")
+        utils.print_board(board=board_state, title="Predicted board")
+
         return board_state
 
 if __name__ == "__main__":
     model_path = r"C:\Users\christian\Desktop\Thefolder\Projects\RookceptionCNN\models\CNNModel.h5"
     test_img_path = r"C:\Users\christian\Desktop\Thefolder\Projects\RookceptionCNN\resources\images\chessboard\board.png"
+    test_img_path2 = r"C:\Users\christian\Desktop\Thefolder\Projects\RookceptionBOT\resources\images\board.png"
 
-    # dataset_path = r"C:\Users\christian\Desktop\Thefolder\Projects\RookceptionCNN\resources\dataset\chesspieces"
-    # class_labels = os.listdir(dataset_path)
+    # Load image and convert to NumPy array
+    # img = Image.open(test_img_path).convert("RGB")  # Ensure 3-channel RGB
+    # img_array = np.array(img) / 255.0  # Normalize pixel values
 
+    # Initialize recognizer and predict board
     recognizer = BoardRecognizer(model_path)
-    board = recognizer.predict_board(test_img_path)
+    board = recognizer.predict_board(test_img_path2, False)

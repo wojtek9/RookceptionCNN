@@ -50,3 +50,21 @@ def board_to_fen(board_state, turn="w", castling_rights="-", en_passant="-", hal
     fen_board = "/".join(fen_rows)
     fen = f"{fen_board} {turn} {castling_rights} {en_passant} {halfmove} {fullmove}"
     return fen
+
+
+def print_board(board, title=""):
+    index_mapping = {i: 8 - i for i in range(8)}
+
+    # Replace "empty" with " ."
+    board = [[piece if piece != "empty" else " ." for piece in row] for row in board]
+
+    if title:
+        print(f"\n{title}:")
+
+    print("  ---------------------------------")
+    for idx, row in enumerate(board):
+        row_number = index_mapping[idx]  # Get the row number
+        formatted_row = "  ".join(f"{piece:>2}" for piece in row)  # two-character spacing
+        print(f"{row_number} | {formatted_row} |")
+    print("  ---------------------------------")
+    print("    a   b   c   d   e   f   g   h ")
