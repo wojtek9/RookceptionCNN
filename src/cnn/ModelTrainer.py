@@ -18,21 +18,26 @@ class CNNTrainer:
         self.model = self.build_model()
 
     def build_model(self):
-        base_model = MobileNetV2(input_shape=(self.img_size[0], self.img_size[1], 3), include_top=False,
-                                 weights='imagenet')
+        base_model = MobileNetV2(input_shape=(64, 64, 3), include_top=False, weights='imagenet')
 
-        for layer in base_model.layers:
-            layer.trainable = False  # Freeze pre-trained layers
+        # Fine-tune deeper layers instead of early ones
+        for layer in base_model.layers[:80]:
+            layer.trainable = False
+        for layer in base_model.layers[80:]:
+            layer.trainable = True
 
         model = models.Sequential([
             base_model,
+            layers.Conv2D(64, (3, 3), activation='relu', padding="same"),  # Extra convolution for piece edges
+            layers.BatchNormalization(),
+            layers.MaxPooling2D((2, 2)),
             layers.GlobalAveragePooling2D(),
             layers.Dense(256, activation='relu'),
             layers.Dropout(0.3),
             layers.Dense(len(self.dataset_loader.class_labels), activation='softmax')
         ])
 
-        model.compile(optimizer=Adam(learning_rate=0.00005), loss='categorical_crossentropy', metrics=['accuracy'])
+        model.compile(optimizer=Adam(learning_rate=0.0001), loss='categorical_crossentropy', metrics=['accuracy'])
         return model
 
     def train(self, epochs=20, batch_size=32):
