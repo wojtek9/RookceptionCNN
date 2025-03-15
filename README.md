@@ -1,1 +1,4 @@
 # Rookception
+
+### CMD
+pipreqs . --force
