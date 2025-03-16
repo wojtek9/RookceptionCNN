@@ -4,7 +4,6 @@ from PIL import Image
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from PIL import ImageEnhance
 
 class DatasetLoader:
     def __init__(self, dataset_path, img_size=(64, 64), test_size=0.1):

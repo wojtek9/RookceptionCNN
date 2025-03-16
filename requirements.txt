@@ -1,6 +1,8 @@
+fastapi
 keras
 numpy
 opencv_python
 Pillow
+pydantic
 scikit_learn
 tensorflow
