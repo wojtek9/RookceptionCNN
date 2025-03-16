@@ -10,6 +10,12 @@
 This project serves as the foundation for a fully automated **chess bot** that can analyze and play games.
 
 ---
+## 📌 Models
+### **RookceptionCNN_v1**
+- **Training Data**: Images exclusively from **Chess.com** (single resolution & theme).
+- **Augmentations**: Slight **pixelation, rotation, and zoom variations**.
+- **Validation Accuracy**: **99.9% - 100%** (due to a small dataset).
+---
 
 ## ⚙️ Project Setup
 ### **1️⃣ Create & Activate a Virtual Environment**
@@ -30,16 +36,31 @@ pip install --upgrade -r requirements.txt
 ```
 
 ## 📡 API Usage
+
 ### **Sending a Chessboard Image for Analysis**
-### **1️⃣ Example Usage**
+You can send a **local chessboard image** along with an optional **turn parameter** to the API.
+
+---
+
+### **Example Usage (Python)**
 ```python
 import requests
 
+# API Endpoint
 api_url = "http://127.0.0.1:8000/analyze/"
+
+# Chessboard Image Path
 image_path = "path/to/chessboard.png"
 
-response = requests.post(api_url, json={"image_path": image_path})
+payload = {
+    "image_path": image_path,  # Path to the chessboard image
+    "turn": "w"                # 'w' for white's turn, 'b' for black's turn (optional)
+}
 
+# Send POST request to the API
+response = requests.post(api_url, json=payload)
+
+# Handle response
 if response.status_code == 200:
     data = response.json()
     print(f"FEN Notation: {data['fen']}")
@@ -50,11 +71,11 @@ else:
 
 ## 🌐 API Endpoints
 
-### **2️⃣ Available Endpoints**
-| **Method** | **Endpoint**  | **Description** |
-|------------|--------------|-----------------|
-| `POST`     | `/analyze/`   | Accepts a chessboard image path and additional FEN-related parameters, then returns the **best move**. |
-| `GET`      | `/test/`      | Returns a simple message to verify the API is running. |
+### **Available Endpoints**
+| **Method** | **Endpoint**  | **Description**                                                                                 |
+|------------|--------------|-------------------------------------------------------------------------------------------------|
+| `POST`     | `/analyze/`   | Accepts a chessboard image path and turn, then returns the **best move**. |
+| `GET`      | `/test/`      | Returns a simple message to verify the API is running.                                          |
 
 ---
 
@@ -63,13 +84,8 @@ When sending a request to `/analyze/`, you can provide the following parameters:
 
 | **Parameter**        | **Type**   | **Description** |
 |----------------------|-----------|-----------------|
-| `image_path`        | `string`  | Path to the local chessboard image (optional). |
-| `turn`              | `string`  | `'w'` for white, `'b'` for black (optional). |
-| `castling_rights`   | `string`  | Castling availability (`"KQkq"` for all rights, `"-"` if none) (default: `"-"`). |
-| `en_passant`        | `string`  | En passant target square (e.g., `"e3"` or `"-"`) (default: `"-"`). |
-| `halfmove`          | `integer` | Halfmove clock for the fifty-move rule (default: `0`). |
-| `fullmove`          | `integer` | Full move number (default: `1`). |
-
+| `image_path`        | `string`  | Path to the local chessboard image. |
+| `turn`              | `string`  | `'w'` for white, `'b'` for black. |
 ---
 
 ### **📤 API Response**
