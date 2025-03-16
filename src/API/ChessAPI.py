@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from src.cnn.BoardRecognizer import BoardRecognizer
 from pydantic import BaseModel, Field
 from typing import Optional
+import time
 
 # Initialize FastAPI and Stockfish
 app = FastAPI()
@@ -38,8 +39,10 @@ class ImageRequest(BaseModel):
 async def analyze_chessboard(request: ImageRequest):
     """
     Analyzes a chess position based on an image and game state.
-    Returns the best move as a string.
+    Returns the best move as a string and logs execution time.
     """
+    start_time = time.time()
+
     try:
         best_move = None
         if request.image_path and request.turn:
@@ -48,7 +51,11 @@ async def analyze_chessboard(request: ImageRequest):
             # Get best move
             best_move = engine.get_next_move(board_state, request.turn)
 
-        return {"best_move": best_move}
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(f"Request processed in {execution_time:.4f} seconds")
+
+        return {"best_move": best_move, "execution_time": f"{execution_time:.4f} seconds"}
 
     except Exception as e:
         return {"error": f"API Exception: {str(e)}"}
