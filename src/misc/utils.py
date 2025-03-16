@@ -17,14 +17,16 @@ def get_all_fens(json_path: str) -> list:
         return []
 
 
-def board_to_fen(board_state, turn="w", castling_rights="-", en_passant="-", halfmove="0", fullmove="1"):
-    """Convert board state (8x8 numpy array) into FEN string."""
+def board_to_fen(board_state, turn="w", castling_rights="KQkq", en_passant="-", halfmove="0", fullmove="1"):
+    """Convert board state (8x8 numpy array) into FEN string including castling rights and en passant."""
+
     # Map CNN labels to chess symbols
     piece_map = {
         "bP": "p", "bN": "n", "bB": "b", "bR": "r", "bQ": "q", "bK": "k",
         "wP": "P", "wN": "N", "wB": "B", "wR": "R", "wQ": "Q", "wK": "K",
         "empty": "1"
     }
+
     fen_rows = []
 
     for row in board_state:
@@ -32,7 +34,7 @@ def board_to_fen(board_state, turn="w", castling_rights="-", en_passant="-", hal
         empty_count = 0
 
         for square in row:
-            piece = piece_map[square]
+            piece = piece_map.get(square, "1")  # Default to empty if not recognized
 
             if piece == "1":  # Empty square
                 empty_count += 1
@@ -48,6 +50,8 @@ def board_to_fen(board_state, turn="w", castling_rights="-", en_passant="-", hal
         fen_rows.append(fen_row)
 
     fen_board = "/".join(fen_rows)
+
+    # Construct full FEN string with castling rights & en passant
     fen = f"{fen_board} {turn} {castling_rights} {en_passant} {halfmove} {fullmove}"
     return fen
 

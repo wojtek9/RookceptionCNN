@@ -6,7 +6,7 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 
-from misc import utils
+from src.misc import utils
 
 
 class BoardRecognizer:
