@@ -5,7 +5,7 @@ import numpy as np
 from PIL import Image
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
-
+import time
 from src.misc import utils
 
 
@@ -55,7 +55,7 @@ class BoardRecognizer:
         return np.array(squares), image_mapping  # Shape (8, 8, 64, 64, 3)
 
     def predict_board(self, image_path, save_squares=False):
-        """Recognizes all pieces on the chessboard, saves squares, and returns an 8x8 matrix."""
+        """Recognizes all pieces on the chessboard using batch prediction for speed."""
         squares, image_mapping = self.extract_squares(image_path, save_squares)  # (8, 8, 64, 64, 3)
         board_state = np.empty((8, 8), dtype=object)
         board_with_accuracy = np.empty((8, 8), dtype=object)
@@ -63,13 +63,18 @@ class BoardRecognizer:
 
         print("\nRecognizing Pieces...")
 
+        # **Flatten the board for batch prediction**
+        all_squares = squares.reshape(-1, 64, 64, 3)  # Shape: (64, 64, 64, 3)
+
+        # **Perform batch prediction**
+        predictions = self.model.predict(all_squares)  # Predict all 64 squares at once
+
+        # **Process results**
         for i, (filename, (row, col)) in enumerate(image_mapping):
-            square_img = np.expand_dims(squares[row][col], axis=0)  # Add batch dimension
-            predictions = self.model.predict(square_img)
-            predicted_class = np.argmax(predictions)  # Get index of highest probability
-            confidence = predictions[0][predicted_class] * 100
+            predicted_class = np.argmax(predictions[i])  # Get index of highest probability
+            confidence = predictions[i][predicted_class] * 100
             board_state[row, col] = self.class_labels[predicted_class]
-            board_with_accuracy[row, col] = f"{self.class_labels[predicted_class]} ({confidence:.2f}%)"  # For printing
+            board_with_accuracy[row, col] = f"{self.class_labels[predicted_class]} ({confidence:.2f}%)"
 
             # Store mapping of image file -> prediction
             prediction_mapping.append((filename, board_state[row, col]))
@@ -96,4 +101,10 @@ if __name__ == "__main__":
 
     # Initialize recognizer and predict board
     recognizer = BoardRecognizer(model_path)
+    start_time = time.time()
     board = recognizer.predict_board(test_img_path2, False)
+    end_time = time.time()
+
+    # Calculate and print the execution time
+    execution_time = end_time - start_time
+    print(f"Prediction took: {execution_time:.4f} seconds")
