@@ -1,0 +1,7 @@
+update reqs:
+pipreqs . --force
+
+start API:
+uvicorn src.API.ChessAPI:app --host 127.0.0.1 --port 8000 --reload
+or use start_api.bat
+debug: http://127.0.0.1:8000/docs

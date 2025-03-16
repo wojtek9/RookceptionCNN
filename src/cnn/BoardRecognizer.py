@@ -108,3 +108,5 @@ if __name__ == "__main__":
     # Calculate and print the execution time
     execution_time = end_time - start_time
     print(f"Prediction took: {execution_time:.4f} seconds")
+
+    print(utils.board_to_fen(board))
