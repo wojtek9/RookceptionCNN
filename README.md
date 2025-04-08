@@ -2,7 +2,7 @@
 
 ## 🏆 Project Overview
 **Rookception** is a **chessboard recognition and move recommendation system** powered by **deep learning and Stockfish**.
-- **Recognize chess pieces** from an image of a chessboard using a **CNN (Convolutional Neural Network)**.
+- **Recognize chess pieces** from an image of a chessboard using a **Convolutional Neural Network**.
 - **Convert the board state to FEN notation** for chess engines.
 - **Analyze the position with Stockfish** and return the best move.
 - **Provide an API** that accepts a chessboard image and returns the best move to play.
